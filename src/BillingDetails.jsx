@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import apiRequestHandler from "./utils/apiRequestHandler";
 
+// TODO: Update with selected plan or challenge data
 const planData = {
 	challengeName: "ProTrader Challenge",
 	challengeType: "twoStep",
@@ -54,6 +55,7 @@ const planData = {
 	},
 };
 
+// TODO: Update with form data for user registration
 const formData = {
 	email: "sajid2@gmail.com",
 	first: "Sajid",
@@ -67,7 +69,7 @@ const formData = {
 
 const BillingDetails = () => {
 	const createUser = useMutation({
-		//   user registration taking place here
+		// user registration taking place here
 		mutationFn: (data) => apiRequestHandler("/users/normal-register", "POST", data),
 
 		onSuccess: async (data) => {
@@ -132,11 +134,12 @@ const BillingDetails = () => {
 						orderStatus: "Accepted",
 						paymentStatus: "Paid",
 					});
+					console.log("🚀 ~ onSuccess: ~ orderStatusUpdate:", orderStatusUpdate);
 
 					// Check if order status update was successful
 					if (
-						orderStatusUpdate.paymentStatus !== "Paid" ||
-						orderStatusUpdate.orderStatus !== "Accepted"
+						orderStatusUpdate?.updatedOrder?.paymentStatus !== "Paid" ||
+						orderStatusUpdate?.updatedOrder?.orderStatus !== "Accepted"
 					) {
 						toast.error("Order or payment status update failed.");
 						return;
@@ -196,7 +199,7 @@ const BillingDetails = () => {
 
 						// Simulated MT5 account data
 						const mt5Data = {
-							account: 999232, // Example account number
+							account: Math.floor(100000 + Math.random() * 900000), // Replace with the new account number,
 							password: "43252@!", // Example password (ensure secure handling)
 							productId: productId,
 							challengeStage: challengeStage,
