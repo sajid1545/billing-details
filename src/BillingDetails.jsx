@@ -71,7 +71,10 @@ const generatePassword = () => {
 	const allCharacters = capitalLetters + smallLetters + numbers + specialCharacters;
 
 	for (let i = password.length; i < 8; i++) {
-		password += allCharacters[Math.floor(Math.random() * allCharacters.length)];
+		// Introduce a time-based factor to ensure uniqueness
+		const uniqueIndex =
+			Math.floor(Math.random() * allCharacters.length) + (Date.now() % allCharacters.length);
+		password += allCharacters[uniqueIndex % allCharacters.length];
 	}
 
 	// Shuffle the password to ensure randomness
@@ -86,7 +89,7 @@ const generatePassword = () => {
 // TODO: Update with form data for user registration
 // user registration data
 const formData = {
-	email: "sajid2@gmail.com",
+	email: "clashking1545@gmail.com",
 	first: "Sajid",
 	last: "Abd",
 	country: "BD",
@@ -193,10 +196,27 @@ const BillingDetails = () => {
 
 					// TODO: Create MT5 account through API integration
 
-					const mt5CreatedThroughApi = true; // Simulated response, replace with actual API call
+					const mt5SignUpData = {
+						EMail: userResponse.email,
+						master_pass: generatePassword(),
+						investor_pass: generatePassword(),
+						amount: planData.accountSize,
+						FirstName: userResponse.first,
+						LastName: userResponse.last,
+						Country: userResponse.country,
+						Address: userResponse.addr,
+						City: userResponse.city,
+						ZIPCode: userResponse.zipCode,
+						Phone: userResponse.phone,
+						Leverage: 30,
+						Group: "demo\\ecn-demo-1",
+					};
+
+					const createUser = await apiRequestHandler("/users/create-user", "POST", mt5SignUpData);
+					console.log("🚀 ~ onSuccess: ~ createUser:", createUser);
 
 					// Check if MT5 account creation was successful
-					if (!mt5CreatedThroughApi) {
+					if (!createUser) {
 						await apiRequestHandler(`/orders/${orderResponse._id}`, "PUT", {
 							orderStatus: "Processing", // Set to Processing if MT5 account creation fails
 						});
@@ -204,7 +224,7 @@ const BillingDetails = () => {
 						return;
 					}
 
-					if (mt5CreatedThroughApi) {
+					if (createUser) {
 						//! Section start: MT5 account creation through API
 						// TODO: This section will be updated after actual api call
 						const productId =
@@ -214,25 +234,30 @@ const BillingDetails = () => {
 							updateUserPurchaseProducts.data.purchasedProducts[orderResponse.orderId].product;
 
 						// Determine challenge stage based on product type
-						let challengeStage = product?.challengeType === "funded" ? "funded" : "phase1";
+						const challengeStage = product?.challengeType === "funded" ? "funded" : "phase1";
 						// Prepare challenge stage data for injecting MT5 account in user's collection
 						const challengeStageData = {
 							...product,
 							challengeStages: {
 								...product.challengeStages,
 								phase1: challengeStage === "funded" ? null : product.challengeStages.phase1,
-								phase2: challengeStage === "funded" ? null : product.challengeStages.phase2,
+								phase2:
+									challengeStage === "funded" || challengeStage === "phase1"
+										? null
+										: product.challengeStages.phase2,
 								funded: challengeStage === "phase1" ? null : product.challengeStages.funded,
 							},
 						};
 
 						// Simulated MT5 account data
 						const mt5Data = {
-							account: Math.floor(100000 + Math.random() * 900000), // Replace with the new account number,
-							password: "43252@!", // Example password (ensure secure handling)
+							account: createUser.login, // Replace with the new account number,
+							investorPassword: createUser.investor_pass,
+							masterPassword: createUser.master_pass,
 							productId: productId,
 							challengeStage: challengeStage,
 							challengeStageData: challengeStageData,
+							group: mt5SignUpData.Group,
 						};
 
 						//! Section ends: MT5 account creation through API
