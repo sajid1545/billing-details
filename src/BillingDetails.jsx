@@ -4,58 +4,87 @@ import apiRequestHandler from "./utils/apiRequestHandler";
 
 // TODO: Update with selected plan or challenge data
 const planData = {
-	challengeName: "ProTrader Challenge",
+	challengeName: "5K Standard Challenge",
 	challengeType: "twoStep",
-	accountSize: 100000,
-	challengePrice: 500,
-	platform: "MetaTrader 5",
-	broker: "XYZ Broker",
-	status: "active",
+	accountSize: 5000,
+	challengePrice: 35,
+	platform: "MT5",
+	broker: "Haven Capital Grp",
 	refundable: true,
 	challengeStages: {
 		phase1: {
 			maxDailyDrawdown: 5,
-			maxDrawdown: 10,
-			tradingPeriod: "30 days",
-			profitTarget: 8,
-			minTradingDays: 10,
+			maxDrawdown: 12,
+			tradingPeriod: "unlimited",
+			profitTarget: 10,
+			minTradingDays: 5,
 			newsTrading: true,
-			weekendHolding: false,
-			drawdownType: "equity",
+			weekendHolding: true,
+			drawdownType: "Equity/balance",
 			consistencyRule: true,
-			leverage: 100,
-			stage: "Phase 1",
+			leverage: 30,
+			stage: "phase1",
 		},
 		phase2: {
 			maxDailyDrawdown: 5,
 			maxDrawdown: 10,
-			tradingPeriod: "60 days",
+			tradingPeriod: "unlimited",
 			profitTarget: 5,
 			minTradingDays: 10,
 			newsTrading: true,
-			weekendHolding: false,
-			drawdownType: "equity",
+			weekendHolding: true,
+			drawdownType: "Equity/balance",
 			consistencyRule: true,
-			leverage: 100,
-			stage: "Phase 2",
+			leverage: 30,
+			stage: "phase2",
 		},
 		funded: {
 			maxDailyDrawdown: 5,
-			maxDrawdown: 10,
-			tradingPeriod: "Indefinite",
-			profitTarget: 0,
-			minTradingDays: 0,
+			maxDrawdown: 12,
+			tradingPeriod: "unlimited",
+			profitTarget: null, // Typically, funded accounts may not have a profit target
+			minTradingDays: 5, // No minimum trading days in funded stage
 			newsTrading: true,
 			weekendHolding: true,
-			drawdownType: "balance",
-			consistencyRule: false,
-			leverage: 50,
-			stage: "Funded",
+			drawdownType: "Equity/balance",
+			consistencyRule: true,
+			leverage: 30,
+			stage: "funded",
 		},
 	},
 };
 
+const generatePassword = () => {
+	const capitalLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	const smallLetters = "abcdefghijklmnopqrstuvwxyz";
+	const numbers = "0123456789";
+	const specialCharacters = "!@#$%^&*()_+[]{}|;:,.<>?";
+
+	// Ensure at least one of each required type
+	let password = "";
+	password += capitalLetters[Math.floor(Math.random() * capitalLetters.length)];
+	password += smallLetters[Math.floor(Math.random() * smallLetters.length)];
+	password += numbers[Math.floor(Math.random() * numbers.length)];
+	password += specialCharacters[Math.floor(Math.random() * specialCharacters.length)];
+
+	// Fill the rest of the password length with a mix of all types
+	const allCharacters = capitalLetters + smallLetters + numbers + specialCharacters;
+
+	for (let i = password.length; i < 8; i++) {
+		password += allCharacters[Math.floor(Math.random() * allCharacters.length)];
+	}
+
+	// Shuffle the password to ensure randomness
+	password = password
+		.split("")
+		.sort(() => Math.random() - 0.5)
+		.join("");
+
+	return password;
+};
+
 // TODO: Update with form data for user registration
+// user registration data
 const formData = {
 	email: "sajid2@gmail.com",
 	first: "Sajid",
@@ -134,7 +163,6 @@ const BillingDetails = () => {
 						orderStatus: "Accepted",
 						paymentStatus: "Paid",
 					});
-					console.log("🚀 ~ onSuccess: ~ orderStatusUpdate:", orderStatusUpdate);
 
 					// Check if order status update was successful
 					if (
@@ -164,6 +192,7 @@ const BillingDetails = () => {
 					// Create MT5 account
 
 					// TODO: Create MT5 account through API integration
+
 					const mt5CreatedThroughApi = true; // Simulated response, replace with actual API call
 
 					// Check if MT5 account creation was successful
@@ -254,7 +283,6 @@ const BillingDetails = () => {
 	const onSubmit = async (event) => {
 		event.preventDefault();
 
-		toast.success("Payment processed successfully!");
 		await createUser.mutateAsync(formData);
 	};
 
