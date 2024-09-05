@@ -42,8 +42,8 @@ const planData = {
 			maxDailyDrawdown: 5,
 			maxDrawdown: 12,
 			tradingPeriod: "unlimited",
-			profitTarget: null, // Typically, funded accounts may not have a profit target
-			minTradingDays: 5, // No minimum trading days in funded stage
+			profitTarget: null,
+			minTradingDays: 5,
 			newsTrading: true,
 			weekendHolding: true,
 			drawdownType: "Equity/balance",
