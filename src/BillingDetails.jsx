@@ -89,7 +89,7 @@ const generatePassword = () => {
 // TODO: Update with form data for user registration
 // user registration data
 const formData = {
-	email: "clashking1545@gmail.com",
+	email: "zentexx2023@gmail.com",
 	first: "Sajid",
 	last: "Abd",
 	country: "BD",
@@ -201,7 +201,10 @@ const BillingDetails = () => {
 						master_pass: generatePassword(),
 						investor_pass: generatePassword(),
 						amount: planData.accountSize,
-						FirstName: userResponse.first,
+						// FirstName: userResponse.first,
+						FirstName: `summitstrike - ${planData?.challengeName} ${userResponse.first} ${
+							userResponse.first
+						} (${planData?.challengeType === "twoStep" ? "phase1" : "funded"})`,
 						LastName: userResponse.last,
 						Country: userResponse.country,
 						Address: userResponse.addr,
@@ -211,6 +214,7 @@ const BillingDetails = () => {
 						Leverage: 30,
 						Group: "demo\\ecn-demo-1",
 					};
+					console.log("🚀 ~ onSuccess: ~ mt5SignUpData:", mt5SignUpData);
 
 					const createUser = await apiRequestHandler("/users/create-user", "POST", mt5SignUpData);
 					console.log("🚀 ~ onSuccess: ~ createUser:", createUser);
