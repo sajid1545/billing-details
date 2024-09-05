@@ -21,12 +21,12 @@ const AssignCredentials = () => {
 		{
 			Email: "ask.bersekutu@gmail.com",
 			Password: "H%k1RuEZ",
-			Account: 123456,
+			Account: 432153,
 		},
 		{
 			Email: "test@gmail.com",
 			Password: "H%k1RuEZ",
-			Account: 412312,
+			Account: 413624,
 		},
 	];
 
@@ -161,6 +161,11 @@ const AssignCredentials = () => {
 					toast.error("Failed to update user MT5 account.");
 					return;
 				}
+
+				// Update the user's role to trader
+				await apiRequestHandler(`/users/${createUserResponse._id}`, "PUT", {
+					role: "trader",
+				});
 
 				toast.success("MT5 account created successfully.");
 			}
