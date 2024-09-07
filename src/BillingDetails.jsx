@@ -1,58 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import { sc5k } from "./constants/challengeDatas";
 import apiRequestHandler from "./utils/apiRequestHandler";
 
 // TODO: Update with selected plan or challenge data
-const planData = {
-	challengeName: "5K Standard Challenge",
-	challengeType: "twoStep",
-	accountSize: 5000,
-	challengePrice: 35,
-	platform: "MT5",
-	broker: "Haven Capital Grp",
-	refundable: true,
-	challengeStages: {
-		phase1: {
-			maxDailyDrawdown: 5,
-			maxDrawdown: 12,
-			tradingPeriod: "unlimited",
-			profitTarget: 10,
-			minTradingDays: 5,
-			newsTrading: true,
-			weekendHolding: true,
-			drawdownType: "Equity/balance",
-			consistencyRule: true,
-			leverage: 30,
-			stage: "phase1",
-		},
-		phase2: {
-			maxDailyDrawdown: 5,
-			maxDrawdown: 10,
-			tradingPeriod: "unlimited",
-			profitTarget: 5,
-			minTradingDays: 10,
-			newsTrading: true,
-			weekendHolding: true,
-			drawdownType: "Equity/balance",
-			consistencyRule: true,
-			leverage: 30,
-			stage: "phase2",
-		},
-		funded: {
-			maxDailyDrawdown: 5,
-			maxDrawdown: 12,
-			tradingPeriod: "unlimited",
-			profitTarget: null,
-			minTradingDays: 5,
-			newsTrading: true,
-			weekendHolding: true,
-			drawdownType: "Equity/balance",
-			consistencyRule: true,
-			leverage: 30,
-			stage: "funded",
-		},
-	},
-};
+const planData = sc5k;
 
 const generatePassword = () => {
 	const capitalLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
