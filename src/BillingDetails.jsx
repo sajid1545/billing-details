@@ -263,9 +263,8 @@ const BillingDetails = () => {
 						onChange={handleSelectChange}
 						className="block w-full px-4 py-3 rounded-lg border-gray-300 shadow-md focus:border-indigo-500 focus:ring-indigo-500 text-lg">
 						<option value="">Choose an addon...</option>
-						<option value="addon1">Addon 1</option>
-						<option value="addon2">Addon 2</option>
-						<option value="addon3">Addon 3</option>
+						<option value="addon1">Swap free accounts</option>
+						<option value="addon2">Life time payout 90%</option>
 					</select>
 
 					{/* Display selected addon */}
