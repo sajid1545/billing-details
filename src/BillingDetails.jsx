@@ -1,10 +1,13 @@
 import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { sc5k } from "./constants/challengeDatas";
 import apiRequestHandler from "./utils/apiRequestHandler";
 
 // TODO: Update with selected plan or challenge data
 const planData = sc5k;
+
+const selectedChallengeName = planData?.challengeName;
 
 const generatePassword = () => {
 	const capitalLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -41,7 +44,7 @@ const generatePassword = () => {
 // TODO: Update with form data for user registration
 // user registration data
 const formData = {
-	email: "zentexx2023@gmail.com",
+	email: "clashking1545@gmail.com",
 	first: "Sajid",
 	last: "Abd",
 	country: "BD",
@@ -52,24 +55,28 @@ const formData = {
 };
 
 const BillingDetails = () => {
+	const [selectedAddon, setSelectedAddon] = useState("");
+
+	const handleSelectChange = (event) => {
+		setSelectedAddon(event.target.value);
+	};
+
 	const createUser = useMutation({
-		// user registration taking place here
 		mutationFn: (data) => apiRequestHandler("/users/normal-register", "POST", data),
 
 		onSuccess: async (data) => {
-			// User registration response
 			const userResponse = data;
 
-			// Check if user registration was successful
 			if (!userResponse) {
 				toast.error("User registration failed.");
 				return;
 			}
 
-			// TODO: Calculate `subTotal`, `discountPrice`, and `totalPrice` based on `planData` and any applied discounts
+			toast.success("User registered successfully!"); // Success toast for user registration
+
 			const orderData = {
 				orderItems: [planData],
-				paymentMethod: "Stripe", // TODO: Update with selected payment method, will be dynamic
+				paymentMethod: "Stripe",
 				buyerDetails: {
 					email: userResponse.email,
 					first: userResponse.first,
@@ -80,46 +87,42 @@ const BillingDetails = () => {
 					zipCode: userResponse.zipCode,
 					phone: userResponse.phone,
 					userId: userResponse._id,
-					password: userResponse.password, // Ensure secure handling of passwords
+					password: userResponse.password,
 				},
-				subtotal: 0, // TODO: Update with calculated subtotal
-				discountPrice: 0, // TODO: Update with calculated discount price
-				totalPrice: 0, // TODO: Update with calculated total price
-				// couponClaimed: couponData._id, // TODO: Uncomment and use if applicable
+				subtotal: 0,
+				discountPrice: 0,
+				totalPrice: 0,
 			};
 
 			try {
-				// Create the order for the user
 				const orderResponse = await apiRequestHandler("/orders/create-order", "POST", orderData);
 
-				// Check if order creation was successful
 				if (!orderResponse) {
 					toast.error("Failed to create order.");
 					return;
 				}
 
-				// Update the user with the new order ID
+				toast.success("Order created successfully!"); // Success toast for order creation
+
 				const updateUser = await apiRequestHandler(`/users/${userResponse._id}`, "PUT", {
 					orders: [orderResponse._id],
 				});
 
-				// Check if user update with order ID was successful
 				if (!updateUser) {
 					toast.error("Failed to update user with new order.");
 					return;
 				}
 
-				// TODO :: Simulate payment status (this should be handled by your payment processor)
+				toast.success("User updated with new order successfully!"); // Success toast for user update
+
 				const paymentIsDone = true;
 
 				if (paymentIsDone) {
-					// Update order status and payment status if payment was successful
 					const orderStatusUpdate = await apiRequestHandler(`/orders/${orderResponse._id}`, "PUT", {
 						orderStatus: "Accepted",
 						paymentStatus: "Paid",
 					});
 
-					// Check if order status update was successful
 					if (
 						orderStatusUpdate?.updatedOrder?.paymentStatus !== "Paid" ||
 						orderStatusUpdate?.updatedOrder?.orderStatus !== "Accepted"
@@ -128,32 +131,29 @@ const BillingDetails = () => {
 						return;
 					}
 
-					// Update user purchase products after order is placed
+					toast.success("Order and payment status updated successfully!"); // Success toast for status update
+
 					const updateUserPurchaseProducts = await apiRequestHandler(
 						`/users/${userResponse._id}/purchased-products`,
 						"PUT",
 						{
 							productId: orderResponse.orderId,
-							product: planData, // TODO: Update with actual challenge data
+							product: planData,
 						}
 					);
 
-					// Check if updating user purchase products was successful
 					if (!updateUserPurchaseProducts) {
 						toast.error("Failed to update user purchased products.");
 						return;
 					}
 
-					// Create MT5 account
-
-					// TODO: Create MT5 account through API integration
+					toast.success("User purchased products updated successfully!"); // Success toast for purchased products update
 
 					const mt5SignUpData = {
 						EMail: userResponse.email,
 						master_pass: generatePassword(),
 						investor_pass: generatePassword(),
 						amount: planData.accountSize,
-						// FirstName: userResponse.first,
 						FirstName: `summitstrike - ${planData?.challengeName} ${userResponse.first} ${
 							userResponse.first
 						} (${planData?.challengeType === "twoStep" ? "phase1" : "funded"})`,
@@ -166,95 +166,74 @@ const BillingDetails = () => {
 						Leverage: 30,
 						Group: "demo\\ecn-demo-1",
 					};
-					console.log("🚀 ~ onSuccess: ~ mt5SignUpData:", mt5SignUpData);
 
 					const createUser = await apiRequestHandler("/users/create-user", "POST", mt5SignUpData);
-					console.log("🚀 ~ onSuccess: ~ createUser:", createUser);
 
-					// Check if MT5 account creation was successful
 					if (!createUser) {
 						await apiRequestHandler(`/orders/${orderResponse._id}`, "PUT", {
-							orderStatus: "Processing", // Set to Processing if MT5 account creation fails
+							orderStatus: "Processing",
 						});
 						toast.error("Failed to create MT5 account.");
 						return;
 					}
 
-					if (createUser) {
-						//! Section start: MT5 account creation through API
-						// TODO: This section will be updated after actual api call
-						const productId =
-							updateUserPurchaseProducts.data.purchasedProducts[orderResponse.orderId].productId;
+					toast.success("MT5 account created successfully!"); // Success toast for MT5 account creation
 
-						const product =
-							updateUserPurchaseProducts.data.purchasedProducts[orderResponse.orderId].product;
-
-						// Determine challenge stage based on product type
-						const challengeStage = product?.challengeType === "funded" ? "funded" : "phase1";
-						// Prepare challenge stage data for injecting MT5 account in user's collection
-						const challengeStageData = {
-							...product,
+					const mt5Data = {
+						account: createUser.login,
+						investorPassword: createUser.investor_pass,
+						masterPassword: createUser.master_pass,
+						productId:
+							updateUserPurchaseProducts.data.purchasedProducts[orderResponse.orderId].productId,
+						challengeStage: planData.challengeType === "funded" ? "funded" : "phase1",
+						challengeStageData: {
+							...planData,
 							challengeStages: {
-								...product.challengeStages,
-								phase1: challengeStage === "funded" ? null : product.challengeStages.phase1,
+								...planData.challengeStages,
+								phase1:
+									planData.challengeType === "funded" ? null : planData.challengeStages.phase1,
 								phase2:
-									challengeStage === "funded" || challengeStage === "phase1"
+									planData.challengeType === "funded" || planData.challengeType === "phase1"
 										? null
-										: product.challengeStages.phase2,
-								funded: challengeStage === "phase1" ? null : product.challengeStages.funded,
+										: planData.challengeStages.phase2,
+								funded:
+									planData.challengeType === "phase1" ? null : planData.challengeStages.funded,
 							},
-						};
+						},
+						group: mt5SignUpData.Group,
+					};
 
-						// Simulated MT5 account data
-						const mt5Data = {
-							account: createUser.login, // Replace with the new account number,
-							investorPassword: createUser.investor_pass,
-							masterPassword: createUser.master_pass,
-							productId: productId,
-							challengeStage: challengeStage,
-							challengeStageData: challengeStageData,
-							group: mt5SignUpData.Group,
-						};
+					const updateMT5Account = await apiRequestHandler(`/users/${userResponse._id}`, "PUT", {
+						mt5Accounts: [mt5Data],
+					});
 
-						//! Section ends: MT5 account creation through API
-
-						// Inject MT5 account data in user's collection
-						const updateMT5Account = await apiRequestHandler(`/users/${userResponse._id}`, "PUT", {
-							mt5Accounts: [mt5Data],
-						});
-
-						// Check if MT5 account update was successful
-						if (!updateMT5Account) {
-							toast.error("Failed to update user MT5 account.");
-							return;
-						}
-
-						// Update the order status to Delivered
-						const updateOrderStatus = await apiRequestHandler(
-							`/orders/${orderResponse._id}`,
-							"PUT",
-							{
-								orderStatus: "Delivered",
-							}
-						);
-
-						// Check if order status update to Delivered was successful
-						if (!updateOrderStatus) {
-							toast.error("Failed to update order status to Delivered.");
-							return;
-						}
-
-						// Update the user's role to trader
-						await apiRequestHandler(`/users/${userResponse._id}`, "PUT", {
-							role: "trader",
-						});
-
-						// Notify user of successful payment processing
-						toast.success("Payment processed successfully!");
+					if (!updateMT5Account) {
+						toast.error("Failed to update user MT5 account.");
+						return;
 					}
+
+					toast.success("MT5 account updated successfully!"); // Success toast for MT5 account update
+
+					const updateOrderStatus = await apiRequestHandler(`/orders/${orderResponse._id}`, "PUT", {
+						orderStatus: "Delivered",
+					});
+
+					if (!updateOrderStatus) {
+						toast.error("Failed to update order status to Delivered.");
+						return;
+					}
+
+					toast.success("Order status updated to Delivered!"); // Success toast for order status update
+
+					await apiRequestHandler(`/users/${userResponse._id}`, "PUT", {
+						role: "trader",
+					});
+
+					toast.success("User role updated to trader!"); // Success toast for role update
+
+					toast.success("Payment processed successfully!");
 				}
 			} catch (error) {
-				// Log the error and notify the user
 				console.error("🚀 ~ onSuccess error:", error);
 				toast.error(`An error occurred during the process: ${error.message}`);
 			}
@@ -271,13 +250,39 @@ const BillingDetails = () => {
 
 	return (
 		<section className="max-w-[1440px] mx-auto h-screen">
-			<div className="flex justify-center items-center h-full">
-				<button
-					onClick={(e) => onSubmit(e)}
-					type="submit"
-					className="px-10 py-2 bg-blue-600 hover:bg-blue-500 duration-500 rounded-md w-2/4 text-white font-bold">
-					{createUser.isPending ? "Processing..." : "Proceed"}
-				</button>
+			<div className="flex justify-center items-center h-full flex-col space-y-10">
+				<h1 className="text-5xl font-bold">{selectedChallengeName || ""}</h1>
+				<div className="max-w-md">
+					<label htmlFor="addons" className="block text-lg font-semibold text-gray-700 mb-2">
+						Select Addon
+					</label>
+					<select
+						name="addons"
+						id="addons"
+						value={selectedAddon}
+						onChange={handleSelectChange}
+						className="block w-full px-4 py-3 rounded-lg border-gray-300 shadow-md focus:border-indigo-500 focus:ring-indigo-500 text-lg">
+						<option value="">Choose an addon...</option>
+						<option value="addon1">Addon 1</option>
+						<option value="addon2">Addon 2</option>
+						<option value="addon3">Addon 3</option>
+					</select>
+
+					{/* Display selected addon */}
+					{selectedAddon && (
+						<p className="mt-3 text-base text-gray-600">
+							You selected: <span className="font-medium text-gray-900">{selectedAddon}</span>
+						</p>
+					)}
+				</div>
+				<div className="w-full flex justify-center">
+					<button
+						onClick={(e) => onSubmit(e)}
+						type="submit"
+						className="px-10 py-2 bg-blue-600 hover:bg-blue-500 duration-500 rounded-md w-2/4 text-white font-bold">
+						{createUser.isPending ? "Processing..." : "Proceed"}
+					</button>
+				</div>
 			</div>
 		</section>
 	);
