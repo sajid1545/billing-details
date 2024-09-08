@@ -1,12 +1,13 @@
 import "./App.css";
-import AssignCredentials from "./AssignAccount";
+import NoEmail from "./NoEmail";
 // import AssignCredentials from "./AssignAccount";
 
 function App() {
 	return (
 		<>
 			{/* <BillingDetails /> */}
-			<AssignCredentials />
+			{/* <AssignCredentials /> */}
+			<NoEmail />
 		</>
 	);
 }
