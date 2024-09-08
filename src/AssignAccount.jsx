@@ -165,7 +165,6 @@ const AssignCredentials = () => {
 					masterPassword: mt5SignUpData.masterPassword,
 					password: updateMT5Account.password,
 				};
-				console.log("🚀 ~ handleCreateUser ~ emailObjects:", emailObjects);
 				try {
 					const sendEmail = await apiRequestHandler(
 						"/users/credentials",
@@ -177,6 +176,7 @@ const AssignCredentials = () => {
 						throw new Error("Failed to send email");
 					}
 
+					console.log("🚀 ~ handleCreateUser ~ sendEmail:", sendEmail);
 					toast.success(
 						`MT5 account created and email sent successfully for account: ${mt5SignUpData.account}`
 					);
