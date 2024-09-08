@@ -15,6 +15,38 @@ function generateRandomHexId() {
 	return `#${hexColor}`;
 }
 
+const generatePassword = () => {
+	const capitalLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	const smallLetters = "abcdefghijklmnopqrstuvwxyz";
+	const numbers = "0123456789";
+	const specialCharacters = "!@#$%^&*()_+[]{}|;:,.<>?";
+
+	// Ensure at least one of each required type
+	let password = "";
+	password += capitalLetters[Math.floor(Math.random() * capitalLetters.length)];
+	password += smallLetters[Math.floor(Math.random() * smallLetters.length)];
+	password += numbers[Math.floor(Math.random() * numbers.length)];
+	password += specialCharacters[Math.floor(Math.random() * specialCharacters.length)];
+
+	// Fill the rest of the password length with a mix of all types
+	const allCharacters = capitalLetters + smallLetters + numbers + specialCharacters;
+
+	for (let i = password.length; i < 8; i++) {
+		// Introduce a time-based factor to ensure uniqueness
+		const uniqueIndex =
+			Math.floor(Math.random() * allCharacters.length) + (Date.now() % allCharacters.length);
+		password += allCharacters[uniqueIndex % allCharacters.length];
+	}
+
+	// Shuffle the password to ensure randomness
+	password = password
+		.split("")
+		.sort(() => Math.random() - 0.5)
+		.join("");
+
+	return password;
+};
+
 const challenge = sc5k;
 
 const selectedChallengeName = challenge?.challengeName;
@@ -26,19 +58,22 @@ const AssignCredentials = () => {
 	// Todo: Update with actual user data, create an array of objects with user info
 	const userInfos = [
 		{
-			Email: "ask.bersekutu@gmail.com",
-			Password: "H%k1RuEZ",
-			Account: 432153,
+			Email: "clashking1545@gmail.com",
+			Account: Math.floor(100000 + Math.random() * 900000),
 		},
-		{
-			Email: "test@gmail.com",
-			Password: "H%k1RuEZ",
-			Account: 413624,
-		},
+		// {
+		// 	Email: "rasibul179@gmail.com",
+		// 	Account: Math.floor(100000 + Math.random() * 900000),
+		// },
+		// {
+		// 	Email: "zentexx2023@gmail.com",
+		// 	Account: Math.floor(100000 + Math.random() * 900000),
+		// },
 	];
 
 	const handleCreateUser = async () => {
 		setLoading(true);
+		const failedEmailAttempts = []; // Array to store failed email attempts
 
 		try {
 			for (const userDetails of userInfos) {
@@ -50,11 +85,7 @@ const AssignCredentials = () => {
 				};
 
 				// Create user
-				const createUserResponse = await apiRequestHandler(
-					"/users/normal-register",
-					"POST",
-					user,
-				);
+				const createUserResponse = await apiRequestHandler("/users/normal-register", "POST", user);
 
 				if (!createUserResponse) {
 					toast.error("Failed to create user");
@@ -69,46 +100,35 @@ const AssignCredentials = () => {
 					{
 						productId: orderId,
 						product: challenge, // TODO: Update with actual challenge data
-					},
+					}
 				);
 
-				// Check if updating user purchase products was successful
 				if (!updateUserPurchaseProducts) {
 					toast.error("Failed to update user purchased products.");
 					return;
 				}
 
-				const productId =
-					updateUserPurchaseProducts.data.purchasedProducts[orderId].productId;
+				const productId = updateUserPurchaseProducts.data.purchasedProducts[orderId].productId;
+				const product = updateUserPurchaseProducts.data.purchasedProducts[orderId].product;
 
-				const product =
-					updateUserPurchaseProducts.data.purchasedProducts[orderId].product;
-
-				const challengeStage =
-					product?.challengeType === "funded" ? "funded" : "phase1";
+				const challengeStage = product?.challengeType === "funded" ? "funded" : "phase1";
 				const challengeStageData = {
 					...product,
 					challengeStages: {
 						...product.challengeStages,
-						phase1:
-							challengeStage === "funded"
-								? null
-								: product.challengeStages.phase1,
+						phase1: challengeStage === "funded" ? null : product.challengeStages.phase1,
 						phase2:
 							challengeStage === "funded" || challengeStage === "phase1"
 								? null
 								: product.challengeStages.phase2,
-						funded:
-							challengeStage === "phase1"
-								? null
-								: product.challengeStages.funded,
+						funded: challengeStage === "phase1" ? null : product.challengeStages.funded,
 					},
 				};
 
 				const mt5SignUpData = {
 					account: userDetails.Account,
 					email: createUserResponse.email,
-					masterPass: createUserResponse.password,
+					masterPassword: generatePassword(),
 					leverage: 30,
 					group: "demo\\ecn-demo-1", // TODO: Update with actual MT5 group
 					productId,
@@ -122,41 +142,70 @@ const AssignCredentials = () => {
 					"PUT",
 					{
 						mt5Accounts: [mt5SignUpData],
-					},
+					}
 				);
 
-				// Check if MT5 account update was successful
 				if (!updateMT5Account) {
 					toast.error("Failed to update user MT5 account.");
 					return;
 				}
+
+				toast.success(
+					`MT5 account created successfully for user ${createUserResponse.email}. Account: ${mt5SignUpData.account}`
+				);
 
 				// Update the user's role to trader
 				await apiRequestHandler(`/users/${createUserResponse._id}`, "PUT", {
 					role: "trader",
 				});
 
-				toast.success("MT5 account created successfully.");
+				const emailObjects = {
+					email: userDetails.Email,
+					account: userDetails.Account,
+					masterPassword: mt5SignUpData.masterPassword,
+					password: updateMT5Account.password,
+				};
+				console.log("🚀 ~ handleCreateUser ~ emailObjects:", emailObjects);
+				try {
+					const sendEmail = await apiRequestHandler(
+						"/users/credentials",
+						"POST",
+						emailObjects,
+						null
+					);
+					if (!sendEmail) {
+						throw new Error("Failed to send email");
+					}
+
+					toast.success(
+						`MT5 account created and email sent successfully for account: ${mt5SignUpData.account}`
+					);
+				} catch (emailError) {
+					toast.error("Failed to send email. Data has been saved for review.");
+					// Save failed email details for later review
+					failedEmailAttempts.push(emailObjects);
+				}
 			}
 		} catch (error) {
 			toast.error("An unexpected error occurred.");
 		} finally {
 			setLoading(false);
+			if (failedEmailAttempts.length > 0) {
+				console.log("Failed email attempts:", failedEmailAttempts);
+				// Optionally, you can store it in a state for UI display
+			}
 		}
 	};
 
 	return (
 		<section className="max-w-[1440px] mx-auto h-screen">
 			<div className="flex justify-center items-center h-full flex-col">
-				<h1 className="text-5xl font-bold">
-					Challenge Selected : {selectedChallengeName || ""}
-				</h1>
+				<h1 className="text-5xl font-bold">Challenge Selected : {selectedChallengeName || ""}</h1>
 				<button
 					onClick={handleCreateUser}
 					type="button"
 					className="bg-blue-600 px-6 py-4 text-white rounded-md my-10"
-					disabled={loading}
-				>
+					disabled={loading}>
 					{loading ? "Processing..." : "Create MT5 in Database"}
 				</button>
 			</div>
