@@ -58,22 +58,28 @@ const AssignCredentials = () => {
 	// Todo: Update with actual user data, create an array of objects with user info
 	const userInfos = [
 		{
-			Email: "clashking1545@gmail.com",
-			Account: Math.floor(100000 + Math.random() * 900000),
+			Email: "zentexx2023@gmail.com",
+			Account: 991062,
 		},
-		// {
-		// 	Email: "rasibul179@gmail.com",
-		// 	Account: Math.floor(100000 + Math.random() * 900000),
-		// },
-		// {
-		// 	Email: "zentexx2023@gmail.com",
-		// 	Account: Math.floor(100000 + Math.random() * 900000),
-		// },
+		{
+			Email: "zentexx2023@gmail.com",
+			Account: 991063,
+		},
 	];
 
 	const handleCreateUser = async () => {
 		setLoading(true);
 		const failedEmailAttempts = []; // Array to store failed email attempts
+
+		const predefinedPasswords = ["g>_Jx3m8", "g>_Jx3mu", "g>_Jx3mz", "g>_Jx3ms", "g>_Jx3fu"];
+
+		// Helper function to select a predefined password sequentially or randomly
+		let passwordIndex = 0;
+		const getNextPassword = () => {
+			const password = predefinedPasswords[passwordIndex];
+			passwordIndex = (passwordIndex + 1) % predefinedPasswords.length; // Cycle through the passwords
+			return password;
+		};
 
 		try {
 			for (const userDetails of userInfos) {
@@ -128,7 +134,7 @@ const AssignCredentials = () => {
 				const mt5SignUpData = {
 					account: userDetails.Account,
 					email: createUserResponse.email,
-					masterPassword: generatePassword(),
+					masterPassword: getNextPassword(), // Use predefined password
 					leverage: 30,
 					group: "demo\\ecn-demo-1", // TODO: Update with actual MT5 group
 					productId,
@@ -145,45 +151,56 @@ const AssignCredentials = () => {
 					}
 				);
 
-				if (!updateMT5Account) {
-					toast.error("Failed to update user MT5 account.");
-					return;
-				}
-
-				toast.success(
-					`MT5 account created successfully for user ${createUserResponse.email}. Account: ${mt5SignUpData.account}`
+				// Changing password for MT5 account
+				const changeMT5Pass = await apiRequestHandler(
+					`/users/change-password/${mt5SignUpData.account}`,
+					"PUT",
+					{
+						masterPassword: mt5SignUpData.masterPassword,
+					}
 				);
 
-				// Update the user's role to trader
-				await apiRequestHandler(`/users/${createUserResponse._id}`, "PUT", {
-					role: "trader",
-				});
-
-				const emailObjects = {
-					email: userDetails.Email,
-					account: userDetails.Account,
-					masterPassword: mt5SignUpData.masterPassword,
-					password: updateMT5Account.password,
-				};
-				try {
-					const sendEmail = await apiRequestHandler(
-						"/users/credentials",
-						"POST",
-						emailObjects,
-						null
-					);
-					if (!sendEmail) {
-						throw new Error("Failed to send email");
+				if (changeMT5Pass !== "OK") {
+					if (!updateMT5Account) {
+						toast.error("Failed to update user MT5 account.");
+						return;
 					}
 
-					console.log("🚀 ~ handleCreateUser ~ sendEmail:", sendEmail);
 					toast.success(
-						`MT5 account created and email sent successfully for account: ${mt5SignUpData.account}`
+						`MT5 account created successfully for user ${createUserResponse.email}. Account: ${mt5SignUpData.account}`
 					);
-				} catch (emailError) {
-					toast.error("Failed to send email. Data has been saved for review.");
-					// Save failed email details for later review
-					failedEmailAttempts.push(emailObjects);
+
+					// Update the user's role to trader
+					await apiRequestHandler(`/users/${createUserResponse._id}`, "PUT", {
+						role: "trader",
+					});
+
+					const emailObjects = {
+						email: userDetails.Email,
+						account: userDetails.Account,
+						masterPassword: mt5SignUpData.masterPassword,
+						password: updateMT5Account.password,
+					};
+					try {
+						const sendEmail = await apiRequestHandler(
+							"/users/credentials",
+							"POST",
+							emailObjects,
+							null
+						);
+						if (!sendEmail) {
+							throw new Error("Failed to send email");
+						}
+
+						console.log("🚀 ~ handleCreateUser ~ sendEmail:", sendEmail);
+						toast.success(
+							`MT5 account created and email sent successfully for account: ${mt5SignUpData.account}`
+						);
+					} catch (emailError) {
+						toast.error("Failed to send email. Data has been saved for review.");
+						// Save failed email details for later review
+						failedEmailAttempts.push(emailObjects);
+					}
 				}
 			}
 		} catch (error) {
