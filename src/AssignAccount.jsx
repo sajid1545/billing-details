@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { sc5k } from "./constants/challengeDatas";
+import { sc10, sc100, sc25, sc50 } from "./constants/challengeDatas";
 import apiRequestHandler from "./utils/apiRequestHandler";
 
 function generateRandomHexId() {
@@ -47,7 +47,7 @@ const generatePassword = () => {
 	return password;
 };
 
-const challenge = sc5k;
+const challenge = sc25;
 
 const selectedChallengeName = challenge?.challengeName;
 
@@ -57,16 +57,55 @@ const AssignCredentials = () => {
 	// User info array
 	// Todo: Update with actual user data, create an array of objects with user info
 	const userInfos = [
-		{
-			Email: "zentexx2023@gmail.com",
-			Account: 991062,
-		},
-		{
-			Email: "zentexx2023@gmail.com",
-			Account: 991063,
-		},
+		{ Email: "syamaizar_81@yahoo.com", Account: 933347 }, // 1
+		{ Email: "noraniesasamsi786@gmail.com", Account: 990187 }, // 2
+		{ Email: "dkx1piupiu@gmail.com", Account: 930607 }, // 4
+		{ Email: "jihaonce@gmail.com", Account: 932072 }, // 5
+		{ Email: "jihaonce@gmail.com", Account: 932073 }, // 6
+		{ Email: "alhafizsaleh@gmail.com", Account: 932401 }, // 8
+		{ Email: "amirfaiz1414@gmail.com", Account: 990068 }, // 9
+		{ Email: "ramdanrosli0@gmail.com", Account: 932693 }, // 10
+		{ Email: "keluang_man0206@yahoo.com", Account: 931482 }, // 11
+		{ Email: "ashvin.catchatrend@gmail.com", Account: 933513 }, // 12
+		{ Email: "aznur1808@gmail.com", Account: 931607 }, // 13
+		{ Email: "frankenstein_melody@yahoo.com", Account: 932292 }, // 14
+		{ Email: "tahufahamhadam@gmail.com", Account: 933800 }, // 15
+		{ Email: "joewayderupat@gmail.com", Account: 933168 }, // 16
+		{ Email: "unk.trader@gmail.com", Account: 932149 }, // 17
+		{ Email: "shaffawi@gmail.com", Account: 931747 }, // 19
+		{ Email: "mkrich2020@gmail.com", Account: 931549 }, // 20
+		{ Email: "amirsyakir9205@gmail.com", Account: 931663 }, // 21
+		{ Email: "roydamia89@gmail.com", Account: 931673 }, // 22
+		{ Email: "yuzinc@yahoo.com", Account: 930940 }, // 23
+		{ Email: "ritie94@yahoo.com", Account: 931301 }, // 24
+		{ Email: "nedya363@gmail.com", Account: 932028 }, // 25
+		{ Email: "nedya363@gmail.com", Account: 932029 }, // 26
+		{ Email: "radennorfiqri@gmail.com", Account: 931756 }, // 27
+		{ Email: "syhirasyraff@gmail.com", Account: 931761 }, // 28
+		{ Email: "venancenemo@gmail.com", Account: 931553 }, // 29
+		{ Email: "kkernshen@gmail.com", Account: 931225 }, // 30
+		{ Email: "newayroad@gmail.com", Account: 931767 }, // 31
+		{ Email: "neoamir88@gmail.com", Account: 990529 }, // 32
+		{ Email: "azuanabubakar@ymail.com", Account: 990976 }, // 33
+		{ Email: "naim.rezeki@gmail.com", Account: 990585 }, // 34
+		{ Email: "mohdhizwan90@yahoo.com", Account: 990510 }, // 35
+		{ Email: "mohdhizwan90@yahoo.com", Account: 990511 }, // 36
+		{ Email: "nevergiveup6236@gmail.com", Account: 990581 }, // 37
+		{ Email: "azriafifi@gmail.com", Account: 991131 }, // 38
+		{ Email: "azriafifi@gmail.com", Account: 991132 }, // 39
+		{ Email: "chaikiancai0424@gmail.com", Account: 990451 }, // 40
+		{ Email: "propfly2021@gmail.com", Account: 990522 }, // 41
+		{ Email: "rezaaramli93@gmail.com", Account: 990607 }, // 42
+		{ Email: "fahmiazlan@live.com", Account: 990895 }, // 43
+		{ Email: "arnadhir@gmail.com", Account: 990617 }, // 44
+		{ Email: "zamsholkamal@gmail.com", Account: 990531 }, // 45
+		{ Email: "weakchicken25@gmail.com", Account: 991764 }, // 46
+		{ Email: "mohdhafizmazlan@gmail.com", Account: 991790 }, // 47
+		{ Email: "fareezibrahimfx@gmail.com", Account: 991491 }, // 48
+		{ Email: "saifulzaidi151@yahoo.com", Account: 991755 }, // 49
+		{ Email: "zamsholkamal@gmail.com", Account: 991523 }, // 50
+		{ Email: "redzuansauti@gmail.com", Account: 991802 }, // 51
 	];
-
 	const handleCreateUser = async () => {
 		setLoading(true);
 		const failedEmailAttempts = []; // Array to store failed email attempts
@@ -117,17 +156,24 @@ const AssignCredentials = () => {
 				const productId = updateUserPurchaseProducts.data.purchasedProducts[orderId].productId;
 				const product = updateUserPurchaseProducts.data.purchasedProducts[orderId].product;
 
-				const challengeStage = product?.challengeType === "funded" ? "funded" : "phase1";
+				// const challengeStage = product?.challengeType === "funded" ? "funded" : "phase1";
+				const challengeStage = "phase2"; // TODO: Update with actual challenge stage
 				const challengeStageData = {
 					...product,
 					challengeStages: {
 						...product.challengeStages,
-						phase1: challengeStage === "funded" ? null : product.challengeStages.phase1,
+						phase1:
+							challengeStage === "funded" || challengeStage === "phase2"
+								? null
+								: product.challengeStages.phase1,
 						phase2:
 							challengeStage === "funded" || challengeStage === "phase1"
 								? null
 								: product.challengeStages.phase2,
-						funded: challengeStage === "phase1" ? null : product.challengeStages.funded,
+						funded:
+							challengeStage === "phase1" || challengeStage === "phase2"
+								? null
+								: product.challengeStages.funded,
 					},
 				};
 
@@ -136,7 +182,7 @@ const AssignCredentials = () => {
 					email: createUserResponse.email,
 					masterPassword: getNextPassword(), // Use predefined password
 					leverage: 30,
-					group: "demo\\ecn-demo-1", // TODO: Update with actual MT5 group
+					group: "demo\\ecn-demo-2", // TODO: Update with actual MT5 group
 					productId,
 					challengeStage: challengeStage,
 					challengeStageData,
