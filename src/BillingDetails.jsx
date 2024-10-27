@@ -1,52 +1,17 @@
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { foxFunded25step1 } from "./constants/challengeDatas";
+import { foxFunded25step2 } from "./constants/challengeDatas";
 import apiRequestHandler from "./utils/apiRequestHandler";
 
 // TODO: Update with selected plan or challenge data
-const planData = foxFunded25step1;
+const planData = foxFunded25step2;
 
 const selectedChallengeName = planData?.challengeName;
-
-const generatePassword = () => {
-	const capitalLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	const smallLetters = "abcdefghijklmnopqrstuvwxyz";
-	const numbers = "0123456789";
-	const specialCharacters = "!@#$%^&*()_+[]{}|;:,.<>?";
-
-	// Ensure at least one of each required type
-	let password = "";
-	password += capitalLetters[Math.floor(Math.random() * capitalLetters.length)];
-	password += smallLetters[Math.floor(Math.random() * smallLetters.length)];
-	password += numbers[Math.floor(Math.random() * numbers.length)];
-	password +=
-		specialCharacters[Math.floor(Math.random() * specialCharacters.length)];
-
-	// Fill the rest of the password length with a mix of all types
-	const allCharacters =
-		capitalLetters + smallLetters + numbers + specialCharacters;
-
-	for (let i = password.length; i < 8; i++) {
-		// Introduce a time-based factor to ensure uniqueness
-		const uniqueIndex =
-			Math.floor(Math.random() * allCharacters.length) +
-			(Date.now() % allCharacters.length);
-		password += allCharacters[uniqueIndex % allCharacters.length];
-	}
-
-	// Shuffle the password to ensure randomness
-	password = password
-		.split("")
-		.sort(() => Math.random() - 0.5)
-		.join("");
-
-	return password;
-};
 
 // TODO: Update with form data for user registration
 // user registration data
 const formData = {
-	email: "clashking1545@gmail.com",
+	email: "sajjadabdullahTest3@gmail.com",
 	first: "Sajid",
 	last: "Abd",
 	country: "BD",
@@ -58,8 +23,7 @@ const formData = {
 
 const BillingDetails = () => {
 	const createUser = useMutation({
-		mutationFn: (data) =>
-			apiRequestHandler("/users/normal-register", "POST", data),
+		mutationFn: (data) => apiRequestHandler("/users/normal-register", "POST", data),
 
 		onSuccess: async (data) => {
 			const userResponse = data;
@@ -92,11 +56,7 @@ const BillingDetails = () => {
 			};
 
 			try {
-				const orderResponse = await apiRequestHandler(
-					"/orders/create-order",
-					"POST",
-					orderData,
-				);
+				const orderResponse = await apiRequestHandler("/orders/create-order", "POST", orderData);
 
 				if (!orderResponse) {
 					toast.error("Failed to create order.");
@@ -105,13 +65,9 @@ const BillingDetails = () => {
 
 				toast.success("Order created successfully!"); // Success toast for order creation
 
-				const updateUser = await apiRequestHandler(
-					`/users/${userResponse._id}`,
-					"PUT",
-					{
-						orders: [orderResponse._id],
-					},
-				);
+				const updateUser = await apiRequestHandler(`/users/${userResponse._id}`, "PUT", {
+					orders: [orderResponse._id],
+				});
 
 				if (!updateUser) {
 					toast.error("Failed to update user with new order.");
@@ -123,14 +79,10 @@ const BillingDetails = () => {
 				const paymentIsDone = true;
 
 				if (paymentIsDone) {
-					const orderStatusUpdate = await apiRequestHandler(
-						`/orders/${orderResponse._id}`,
-						"PUT",
-						{
-							orderStatus: "Accepted",
-							paymentStatus: "Paid",
-						},
-					);
+					const orderStatusUpdate = await apiRequestHandler(`/orders/${orderResponse._id}`, "PUT", {
+						orderStatus: "Accepted",
+						paymentStatus: "Paid",
+					});
 
 					if (
 						orderStatusUpdate?.updatedOrder?.paymentStatus !== "Paid" ||
@@ -148,7 +100,7 @@ const BillingDetails = () => {
 						{
 							productId: orderResponse.orderId,
 							product: planData,
-						},
+						}
 					);
 
 					if (!updateUserPurchaseProducts) {
@@ -158,31 +110,31 @@ const BillingDetails = () => {
 
 					toast.success("User purchased products updated successfully!"); // Success toast for purchased products update
 
-					const mt5SignUpData = {
-						EMail: userResponse.email,
-						master_pass: generatePassword(),
-						investor_pass: generatePassword(),
-						amount: planData.accountSize,
-						FirstName: `summitstrike - ${planData?.challengeName} ${userResponse.first} ${
-							userResponse.first
-						} (${planData?.challengeType === "twoStep" ? "phase1" : "funded"})`,
-						LastName: userResponse.last,
-						Country: userResponse.country,
-						Address: userResponse.addr,
-						City: userResponse.city,
-						ZIPCode: userResponse.zipCode,
-						Phone: userResponse.phone,
-						Leverage: 30,
-						Group: "demo\\ecn-demo-1",
+					const modifiedEmail = userResponse?.email.toLowerCase();
+
+					const matchTraderSignUpData = {
+						email: modifiedEmail,
+						password: userResponse.password,
+						firstname: userResponse.first,
+						lastname: userResponse.last,
+						phoneNumber: userResponse.phone || "N/A",
+						country: userResponse.country || "N/A",
+						city: userResponse.city || "N/A",
+						address: userResponse.addr || "N/A",
+						postCode: userResponse.zipCode || "N/A",
+						offerUuid: "1abefa9d-ed32-4c20-8ac6-a063ec4dd3e0",
+						depositAmount: planData.accountSize,
 					};
 
 					const createUser = await apiRequestHandler(
 						"/users/create-user",
 						"POST",
-						mt5SignUpData,
+						matchTraderSignUpData
 					);
 
-					if (!createUser) {
+					console.log("createUser", createUser);
+
+					if (!createUser?.accountDetails?.normalAccount?.uuid) {
 						await apiRequestHandler(`/orders/${orderResponse._id}`, "PUT", {
 							orderStatus: "Processing",
 						});
@@ -193,44 +145,27 @@ const BillingDetails = () => {
 					toast.success("MT5 account created successfully!"); // Success toast for MT5 account creation
 
 					const mt5Data = {
-						account: createUser.login,
-						investorPassword: createUser.investor_pass,
-						masterPassword: createUser.master_pass,
+						account: createUser.accountDetails.tradingAccount.login,
+						masterPassword: userResponse.password,
 						productId:
-							updateUserPurchaseProducts.data.purchasedProducts[
-								orderResponse.orderId
-							].productId,
-						challengeStage:
-							planData.challengeType === "funded" ? "funded" : "phase1",
+							updateUserPurchaseProducts.data.purchasedProducts[orderResponse.orderId].productId,
+						challengeStage: "phase1",
 						challengeStageData: {
 							...planData,
 							challengeStages: {
 								...planData.challengeStages,
-								phase1:
-									planData.challengeType === "funded"
-										? null
-										: planData.challengeStages.phase1,
-								phase2:
-									planData.challengeType === "funded" ||
-									planData.challengeType === "phase1"
-										? null
-										: planData.challengeStages.phase2,
-								funded:
-									planData.challengeType === "phase1"
-										? null
-										: planData.challengeStages.funded,
+								phase1: planData.challengeStages.phase1,
+								phase2: null,
+								funded: null,
 							},
 						},
-						group: mt5SignUpData.Group,
+						group: "propextFOXusd-B1",
+						offerUUID: createUser.accountDetails.tradingAccount.offerUuid,
 					};
 
-					const updateMT5Account = await apiRequestHandler(
-						`/users/${userResponse._id}`,
-						"PUT",
-						{
-							mt5Accounts: [mt5Data],
-						},
-					);
+					const updateMT5Account = await apiRequestHandler(`/users/${userResponse._id}`, "PUT", {
+						mt5Accounts: [mt5Data],
+					});
 
 					if (!updateMT5Account) {
 						toast.error("Failed to update user MT5 account.");
@@ -239,13 +174,9 @@ const BillingDetails = () => {
 
 					toast.success("MT5 account updated successfully!"); // Success toast for MT5 account update
 
-					const updateOrderStatus = await apiRequestHandler(
-						`/orders/${orderResponse._id}`,
-						"PUT",
-						{
-							orderStatus: "Delivered",
-						},
-					);
+					const updateOrderStatus = await apiRequestHandler(`/orders/${orderResponse._id}`, "PUT", {
+						orderStatus: "Delivered",
+					});
 
 					if (!updateOrderStatus) {
 						toast.error("Failed to update order status to Delivered.");
@@ -258,7 +189,7 @@ const BillingDetails = () => {
 						role: "trader",
 					});
 
-					toast.success("User role updated to trader!"); // Success toast for role update
+					// Success toast for role update
 
 					toast.success("Payment processed successfully!");
 				}
@@ -286,8 +217,7 @@ const BillingDetails = () => {
 					<button
 						onClick={(e) => onSubmit(e)}
 						type="submit"
-						className="px-10 py-2 bg-blue-600 hover:bg-blue-500 duration-500 rounded-md w-2/4 text-white font-bold"
-					>
+						className="px-10 py-2 bg-blue-600 hover:bg-blue-500 duration-500 rounded-md w-2/4 text-white font-bold">
 						{createUser.isPending ? "Processing..." : "Proceed"}
 					</button>
 				</div>
