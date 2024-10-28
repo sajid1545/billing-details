@@ -21,9 +21,6 @@ export const foxFunded25step1 = {
 			leverage: 30,
 			offerUUID: "1abefa9d-ed32-4c20-8ac6-a063ec4dd3e0",
 			stage: "phase1",
-			_id: {
-				$oid: "671c9e747f3b6f0f68ecdf05",
-			},
 		},
 		phase2: null,
 		funded: {
@@ -38,12 +35,6 @@ export const foxFunded25step1 = {
 			leverage: 30,
 			offerUUID: "dde5740b-c23e-4980-a616-eade125dc7bb",
 			stage: "funded",
-			_id: {
-				$oid: "671c9e747f3b6f0f68ecdf06",
-			},
-		},
-		_id: {
-			$oid: "671c9e747f3b6f0f68ecdf04",
 		},
 	},
 	__v: 0,
