@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { foxFunded25step1 } from "./constants/challengeDatas";
 import apiRequestHandler from "./utils/apiRequestHandler";
+import { generatePassword } from "./utils/generatePassword";
 
 // TODO: Update with selected plan or challenge data
 const planData = foxFunded25step1;
@@ -21,12 +22,25 @@ const formData = {
 	phone: "62525245252",
 };
 
+const challengeStage = "phase1"; // phase1, phase2, funded
+
+let group;
+
+if (challengeStage && challengeStage === "phase1") {
+	group = "demo\\ecn-demo-2-R2";
+} else if (challengeStage === "phase2") {
+	{
+		group = "demo\\ecn-demo-1-R3";
+	}
+} else if (challengeStage === "funded") {
+	group = "ecn-real-3-R4";
+}
+
 const BillingDetails = () => {
 	const createUser = useMutation({
-		mutationFn: (data) =>
-			apiRequestHandler("/users/normal-register", "POST", data),
+		mutationFn: (data) => apiRequestHandler("/users/normal-register", "POST", data),
 
-		onSuccess: async (data) => {
+		onSuccess: async (data, variables) => {
 			const userResponse = data;
 
 			if (!userResponse) {
@@ -34,191 +48,161 @@ const BillingDetails = () => {
 				return;
 			}
 
-			toast.success("User registered successfully!"); // Success toast for user registration
-
+			// Prepare order data with user and plan details
 			const orderData = {
-				orderItems: [planData],
-				paymentMethod: "Stripe",
+				orderItems: [variables.challengeData],
+				paymentMethod: "N/A",
 				buyerDetails: {
 					email: userResponse.email,
 					first: userResponse.first,
 					last: userResponse.last,
-					country: userResponse.country,
-					addr: userResponse.addr,
-					city: userResponse.city,
-					zipCode: userResponse.zipCode,
-					phone: userResponse.phone,
 					userId: userResponse._id,
 					password: userResponse.password,
 				},
-				subtotal: 0,
-				discountPrice: 0,
-				totalPrice: 0,
+				group: group,
+				subtotal: variables?.challengeData?.challengePrice,
+				discountPrice: variables?.discountPrice || 0,
+				totalPrice: variables?.challengeData?.challengePrice,
+				referralCode: "",
+				isGiveAway: true,
 			};
 
 			try {
-				const orderResponse = await apiRequestHandler(
-					"/orders/create-order",
-					"POST",
-					orderData,
-				);
-
+				// Create the order for the user
+				const orderResponse = await apiRequestHandler("/orders/create-order", "POST", orderData);
+				// Check if order creation was successful
 				if (!orderResponse) {
 					toast.error("Failed to create order.");
 					return;
 				}
 
-				toast.success("Order created successfully!"); // Success toast for order creation
+				// Update the user with the new order ID
+				const updateUser = await apiRequestHandler(`/users/${userResponse._id}`, "PUT", {
+					orders: [orderResponse._id],
+				});
 
-				const updateUser = await apiRequestHandler(
-					`/users/${userResponse._id}`,
-					"PUT",
-					{
-						orders: [orderResponse._id],
-					},
-				);
-
+				// Check if user update with order ID was successful
 				if (!updateUser) {
 					toast.error("Failed to update user with new order.");
 					return;
 				}
 
-				toast.success("User updated with new order successfully!"); // Success toast for user update
-
-				const paymentIsDone = true;
-
-				if (paymentIsDone) {
-					const orderStatusUpdate = await apiRequestHandler(
-						`/orders/${orderResponse._id}`,
-						"PUT",
-						{
-							orderStatus: "Accepted",
-							paymentStatus: "Paid",
-						},
-					);
-
-					if (
-						orderStatusUpdate?.updatedOrder?.paymentStatus !== "Paid" ||
-						orderStatusUpdate?.updatedOrder?.orderStatus !== "Accepted"
-					) {
-						toast.error("Order or payment status update failed.");
-						return;
+				// Update user purchase products after order is placed
+				const updateUserPurchaseProducts = await apiRequestHandler(
+					`/users/${userResponse._id}/purchased-products`,
+					"PUT",
+					{
+						productId: orderResponse.orderId,
+						product: variables?.challengeData, // TODO: Update with actual challenge data
 					}
+				);
 
-					toast.success("Order and payment status updated successfully!"); // Success toast for status update
+				// Check if updating user purchase products was successful
+				if (!updateUserPurchaseProducts) {
+					toast.error("Failed to update user purchased products.");
+					return;
+				}
 
-					const updateUserPurchaseProducts = await apiRequestHandler(
-						`/users/${userResponse._id}/purchased-products`,
-						"PUT",
-						{
-							productId: orderResponse.orderId,
-							product: planData,
+				// Create MT5 account
+
+				const sanitizedChallengeName = planData.challengeName.replace(
+					/\s*\((Phase-1|Phase-2|Funded)\)/i,
+					""
+				);
+
+				const mt5SignUpData = {
+					EMail: data?.email,
+					master_pass: generatePassword(),
+					investor_pass: generatePassword(),
+					amount: variables?.challengeData?.accountSize,
+					FirstName: `summit-strike ${sanitizedChallengeName} (${challengeStage})  ${variables?.first} ${variables?.last}`,
+					LastName: variables?.last,
+					Leverage: 30,
+					Group: group,
+				};
+
+				const createUser = await apiRequestHandler("/users/create-user", "POST", mt5SignUpData);
+
+				// Check if MT5 account creation was successful
+				if (!createUser?.login) {
+					await apiRequestHandler(`/orders/${orderResponse._id}`, "PUT", {
+						orderStatus: "Processing", // Set to Processing if MT5 account creation fails
+					});
+					toast.error("Failed to create MT5 account.");
+					return;
+				}
+
+				if (createUser) {
+					const productId =
+						updateUserPurchaseProducts.data.purchasedProducts[orderResponse.orderId].productId;
+
+					const product =
+						updateUserPurchaseProducts.data.purchasedProducts[orderResponse.orderId].product;
+
+					// Prepare challenge stage data for injecting MT5 account in user's collection
+					const challengeStageData = {
+						...product,
+						challengeName: sanitizedChallengeName,
+						challengeStages: {
+							phase1:
+								challengeStage === "phase1"
+									? variables?.challengeData?.challengeStages?.phase1
+									: null,
+							phase2:
+								challengeStage === "phase2"
+									? variables?.challengeData?.challengeStages?.phase2
+									: null,
+							funded:
+								challengeStage === "phase1" || challengeStage === "phase2"
+									? null
+									: variables?.challengeData?.challengeStages?.funded,
 						},
-					);
-
-					if (!updateUserPurchaseProducts) {
-						toast.error("Failed to update user purchased products.");
-						return;
-					}
-
-					toast.success("User purchased products updated successfully!"); // Success toast for purchased products update
-
-					const modifiedEmail = userResponse?.email.toLowerCase();
-
-					const matchTraderSignUpData = {
-						email: modifiedEmail,
-						password: userResponse.password,
-						firstname: userResponse.first,
-						lastname: userResponse.last,
-						phoneNumber: userResponse.phone || "N/A",
-						country: userResponse.country || "N/A",
-						city: userResponse.city || "N/A",
-						address: userResponse.addr || "N/A",
-						postCode: userResponse.zipCode || "N/A",
-						offerUuid: "1abefa9d-ed32-4c20-8ac6-a063ec4dd3e0",
-						depositAmount: planData.accountSize,
 					};
 
-					const createUser = await apiRequestHandler(
-						"/users/create-user",
-						"POST",
-						matchTraderSignUpData,
-					);
-
-					console.log("createUser", createUser);
-
-					if (!createUser?.accountDetails?.normalAccount?.uuid) {
-						await apiRequestHandler(`/orders/${orderResponse._id}`, "PUT", {
-							orderStatus: "Processing",
-						});
-						toast.error("Failed to create MT5 account.");
-						return;
-					}
-
-					toast.success("MT5 account created successfully!"); // Success toast for MT5 account creation
-
+					// Simulated MT5 account data
 					const mt5Data = {
-						account: createUser.accountDetails.tradingAccount.login,
-						masterPassword: userResponse.password,
-						productId:
-							updateUserPurchaseProducts.data.purchasedProducts[
-								orderResponse.orderId
-							].productId,
-						challengeStage: "phase1",
-						challengeStageData: {
-							...planData,
-							challengeStages: {
-								...planData.challengeStages,
-								phase1: planData.challengeStages.phase1,
-								phase2: null,
-								funded: null,
-							},
-						},
-						group: "propextFOXusd-B1",
-						offerUUID: createUser.accountDetails.tradingAccount.offerUuid,
+						account: createUser.login, // Replace with the new account number,
+						investorPassword: createUser.investor_pass,
+						masterPassword: createUser.master_pass,
+						productId: productId,
+						challengeStage: challengeStage,
+						challengeStageData: challengeStageData,
+						group: mt5SignUpData.Group,
 					};
 
-					const updateMT5Account = await apiRequestHandler(
-						`/users/${userResponse._id}`,
-						"PUT",
-						{
-							matchTraderAccounts: [mt5Data],
-						},
-					);
+					//! Section ends: MT5 account creation through API
 
+					// Inject MT5 account data in user's collection
+					const updateMT5Account = await apiRequestHandler(`/users/${userResponse._id}`, "PUT", {
+						mt5Accounts: [mt5Data],
+						role: "trader",
+					});
+
+					// Check if MT5 account update was successful
 					if (!updateMT5Account) {
 						toast.error("Failed to update user MT5 account.");
 						return;
 					}
 
-					toast.success("MT5 account updated successfully!"); // Success toast for MT5 account update
+					// Update the order status to Delivered
+					const updateOrderStatus = await apiRequestHandler(`/orders/${orderResponse._id}`, "PUT", {
+						orderStatus: "Delivered",
+						paymentStatus: "Paid",
+					});
 
-					const updateOrderStatus = await apiRequestHandler(
-						`/orders/${orderResponse._id}`,
-						"PUT",
-						{
-							orderStatus: "Delivered",
-						},
-					);
-
+					// Check if order status update to Delivered was successful
 					if (!updateOrderStatus) {
 						toast.error("Failed to update order status to Delivered.");
 						return;
 					}
 
-					toast.success("Order status updated to Delivered!"); // Success toast for order status update
-
-					await apiRequestHandler(`/users/${userResponse._id}`, "PUT", {
-						role: "trader",
-					});
-
-					// Success toast for role update
-
-					toast.success("Payment processed successfully!");
+					// Notify user of successful payment processing
+					toast.success("Mt5 Account Assign Successful!");
 				}
 			} catch (error) {
+				// Log the error and notify user
 				console.error("🚀 ~ onSuccess error:", error);
-				toast.error(`An error occurred during the process: ${error.message}`);
+				toast.error("An error occurred during the process: " + error.message);
 			}
 		},
 	});
@@ -226,7 +210,19 @@ const BillingDetails = () => {
 	const onSubmit = async (event) => {
 		event.preventDefault();
 
-		await createUser.mutateAsync(formData);
+		const infos = {
+			email: "clashking1545@gmail.com",
+			first: "Sajid",
+			last: "Abd",
+			country: "BD",
+			addr: "CTG",
+			city: "CTG",
+			zipCode: "15314",
+			phone: "62525245252",
+			challengeData: planData,
+		};
+
+		await createUser.mutateAsync(infos);
 	};
 
 	// Combining the loading states
@@ -240,8 +236,7 @@ const BillingDetails = () => {
 					<button
 						onClick={(e) => onSubmit(e)}
 						type="submit"
-						className="px-10 py-2 bg-blue-600 hover:bg-blue-500 duration-500 rounded-md w-2/4 text-white font-bold"
-					>
+						className="px-10 py-2 bg-blue-600 hover:bg-blue-500 duration-500 rounded-md w-2/4 text-white font-bold">
 						{createUser.isPending ? "Processing..." : "Proceed"}
 					</button>
 				</div>
