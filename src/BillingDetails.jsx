@@ -9,19 +9,6 @@ const planData = foxFunded25step1;
 
 const selectedChallengeName = planData?.challengeName;
 
-// TODO: Update with form data for user registration
-// user registration data
-const formData = {
-	email: "clashking1545@gmail.com",
-	first: "Sajid",
-	last: "Abd",
-	country: "BD",
-	addr: "CTG",
-	city: "CTG",
-	zipCode: "15314",
-	phone: "62525245252",
-};
-
 const challengeStage = "phase1"; // phase1, phase2, funded
 
 let group = "VB\\contest.IB_2501_03";
