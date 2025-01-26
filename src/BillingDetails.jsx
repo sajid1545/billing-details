@@ -11,7 +11,7 @@ const selectedChallengeName = planData?.challengeName;
 
 const challengeStage = "phase1"; // phase1, phase2, funded
 
-let group = "VB\\contest.IB_2501_03";
+let group = "VB\\contest.IB_2501_02";
 
 const BillingDetails = () => {
 	const createUser = useMutation({
@@ -38,7 +38,7 @@ const BillingDetails = () => {
 				},
 				group: group,
 				subtotal: variables?.challengeData?.challengePrice,
-				discountPrice: variables?.discountPrice || 0,
+				discountPrice: variables?.challengeData?.discountPrice || 0,
 				totalPrice: variables?.challengeData?.challengePrice,
 				referralCode: "",
 				isGiveAway: false,
@@ -92,7 +92,7 @@ const BillingDetails = () => {
 					master_pass: generatePassword(),
 					investor_pass: generatePassword(),
 					amount: variables?.challengeData?.accountSize,
-					FirstName: `summit-strike ${sanitizedChallengeName} (${challengeStage})  ${variables?.first} ${variables?.last}`,
+					FirstName: `Foxx Funded ${sanitizedChallengeName} (${challengeStage})  ${variables?.first} ${variables?.last}`,
 					LastName: variables?.last,
 					Leverage: 30,
 					Group: group,
