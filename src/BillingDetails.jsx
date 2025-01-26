@@ -24,17 +24,7 @@ const formData = {
 
 const challengeStage = "phase1"; // phase1, phase2, funded
 
-let group;
-
-if (challengeStage && challengeStage === "phase1") {
-	group = "demo\\ecn-demo-2-R2";
-} else if (challengeStage === "phase2") {
-	{
-		group = "demo\\ecn-demo-1-R3";
-	}
-} else if (challengeStage === "funded") {
-	group = "ecn-real-3-R4";
-}
+let group = "VB\\contest.IB_2501_03";
 
 const BillingDetails = () => {
 	const createUser = useMutation({
@@ -64,7 +54,7 @@ const BillingDetails = () => {
 				discountPrice: variables?.discountPrice || 0,
 				totalPrice: variables?.challengeData?.challengePrice,
 				referralCode: "",
-				isGiveAway: true,
+				isGiveAway: false,
 			};
 
 			try {
@@ -224,8 +214,6 @@ const BillingDetails = () => {
 
 		await createUser.mutateAsync(infos);
 	};
-
-	// Combining the loading states
 
 	return (
 		<section className="max-w-[1440px] mx-auto h-screen">

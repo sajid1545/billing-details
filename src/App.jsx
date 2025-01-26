@@ -1,4 +1,3 @@
-import "./App.css";
 import BillingDetails from "./BillingDetails";
 // import AssignCredentials from "./AssignAccount";
 

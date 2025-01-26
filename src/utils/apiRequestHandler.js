@@ -3,7 +3,7 @@ import axios from "axios";
 const apiRequestHandler = async (routePath, method, data = null, token = null) => {
 	try {
 		const axiosPublic = axios.create({
-			baseURL: "http://localhost:5000/api/fox-funded/v1",
+			baseURL: "http://localhost:5000/api/foxx-funded/v1",
 			// baseURL: `${import.meta.env.VITE_BASE_URL}/api/summit/v1`,
 		});
 
