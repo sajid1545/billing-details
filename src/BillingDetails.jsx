@@ -11,7 +11,7 @@ const selectedChallengeName = planData?.challengeName;
 
 const challengeStage = "phase1"; // phase1, phase2, funded
 
-let group = "VB\\demo.IB_2501_02";
+let group = "demo\\forex-hedge-usd-01";
 
 const BillingDetails = () => {
 	const createUser = useMutation({
