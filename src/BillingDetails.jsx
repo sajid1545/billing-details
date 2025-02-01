@@ -1,11 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { foxFunded25step1 } from "./constants/challengeDatas";
+import { foxFunded25step2 } from "./constants/challengeDatas";
 import apiRequestHandler from "./utils/apiRequestHandler";
 import { generatePassword } from "./utils/generatePassword";
 
 // TODO: Update with selected plan or challenge data
-const planData = foxFunded25step1;
+const planData = foxFunded25step2;
 
 const selectedChallengeName = planData?.challengeName;
 

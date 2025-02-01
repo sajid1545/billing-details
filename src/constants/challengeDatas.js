@@ -1,12 +1,12 @@
 //  Standard Challenge DATA
 
 export const foxFunded25step1 = {
-	challengeName: "Fox Funded 25k oneStep",
+	challengeName: "Foxx Funded 25k oneStep",
 	challengeType: "oneStep",
 	accountSize: 25000,
 	challengePrice: 219,
-	platform: "Match-Trader",
-	broker: "Match-Trader",
+	platform: "MT5",
+	broker: "MT5",
 	status: "active",
 	challengeStages: {
 		phase1: {
@@ -41,12 +41,12 @@ export const foxFunded25step1 = {
 };
 
 export const foxFunded25step2 = {
-	challengeName: "Fox Funded 25k twoStep",
+	challengeName: "Foxx Funded 25k twoStep",
 	challengeType: "twoStep",
 	accountSize: 25000,
 	challengePrice: 206,
-	platform: "Match-Trader",
-	broker: "Match-Trader",
+	platform: "MT5",
+	broker: "MT5",
 	status: "active",
 	challengeStages: {
 		phase1: {
