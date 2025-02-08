@@ -92,7 +92,7 @@ const BillingDetails = () => {
 					master_pass: generatePassword(),
 					investor_pass: generatePassword(),
 					amount: variables?.challengeData?.accountSize,
-					FirstName: `Foxx Funded ${sanitizedChallengeName} (${challengeStage})  ${variables?.first} ${variables?.last}`,
+					FirstName: `Foxx Funded - ${sanitizedChallengeName} (${challengeStage})  ${variables?.first} ${variables?.last}`,
 					LastName: variables?.last,
 					Leverage: 30,
 					Group: group,
