@@ -78,7 +78,7 @@ const BillingDetails = () => {
 					"PUT",
 					{
 						productId: orderResponse.orderId,
-						product: variables?.challengeData, // TODO: Update with actual challenge data
+						product: variables?.challengeData,
 					}
 				);
 
