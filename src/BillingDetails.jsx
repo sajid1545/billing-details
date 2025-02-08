@@ -1,17 +1,25 @@
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { foxFunded25step2 } from "./constants/challengeDatas";
+import { challenges } from "./constants/challengeDatas";
 import apiRequestHandler from "./utils/apiRequestHandler";
 import { generatePassword } from "./utils/generatePassword";
 
 // TODO: Update with selected plan or challenge data
-const planData = foxFunded25step2;
+const planData = challenges.ff5kOneStepP1;
 
 const selectedChallengeName = planData?.challengeName;
 
-const challengeStage = "phase1"; // phase1, phase2, funded
+const challengeStage = planData?.currentPhase;
 
-let group = "demo\\forex-hedge-usd-01";
+let group;
+
+if (challengeStage === "phase1") {
+	group = "demo\\phase1";
+} else if (challengeStage === "phase2") {
+	group = "demo\\phase2";
+} else if (challengeStage === "funded") {
+	group = "demo\\phase3";
+}
 
 const BillingDetails = () => {
 	const createUser = useMutation({
@@ -188,14 +196,9 @@ const BillingDetails = () => {
 		event.preventDefault();
 
 		const infos = {
-			email: "clashking1545@gmail.com",
-			first: "Sajid",
-			last: "Abd",
-			country: "BD",
-			addr: "CTG",
-			city: "CTG",
-			zipCode: "15314",
-			phone: "62525245252",
+			email: "clashking1545@gmail.com", // TODO: Update with actual user email
+			first: "Sajid", // TODO: Update with actual user first name
+			last: "Abd", // TODO: Update with actual user last name
 			challengeData: planData,
 		};
 
