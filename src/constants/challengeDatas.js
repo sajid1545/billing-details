@@ -5,8 +5,8 @@ export const challenges = {
 		currentPhase: "phase1",
 		accountSize: 5000,
 		challengePrice: 53,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: {
@@ -45,8 +45,8 @@ export const challenges = {
 		currentPhase: "phase1",
 		accountSize: 10000,
 		challengePrice: 89,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: {
@@ -85,8 +85,8 @@ export const challenges = {
 		currentPhase: "phase1",
 		accountSize: 25000,
 		challengePrice: 219,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: {
@@ -125,8 +125,8 @@ export const challenges = {
 		currentPhase: "phase1",
 		accountSize: 50000,
 		challengePrice: 299,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: {
@@ -165,8 +165,8 @@ export const challenges = {
 		currentPhase: "phase1",
 		accountSize: 100000,
 		challengePrice: 455,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: {
@@ -205,8 +205,8 @@ export const challenges = {
 		currentPhase: "phase1",
 		accountSize: 200000,
 		challengePrice: 806,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: {
@@ -245,8 +245,8 @@ export const challenges = {
 		currentPhase: "phase1",
 		accountSize: 300000,
 		challengePrice: 1118,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: {
@@ -286,8 +286,8 @@ export const challenges = {
 		currentPhase: "funded",
 		accountSize: 5000,
 		challengePrice: 53,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: null,
@@ -314,8 +314,8 @@ export const challenges = {
 		currentPhase: "funded",
 		accountSize: 10000,
 		challengePrice: 89,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: null,
@@ -342,8 +342,8 @@ export const challenges = {
 		currentPhase: "funded",
 		accountSize: 25000,
 		challengePrice: 219,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: null,
@@ -370,8 +370,8 @@ export const challenges = {
 		currentPhase: "funded",
 		accountSize: 50000,
 		challengePrice: 299,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: null,
@@ -398,8 +398,8 @@ export const challenges = {
 		currentPhase: "funded",
 		accountSize: 100000,
 		challengePrice: 455,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: null,
@@ -426,8 +426,8 @@ export const challenges = {
 		currentPhase: "funded",
 		accountSize: 200000,
 		challengePrice: 806,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: null,
@@ -454,8 +454,8 @@ export const challenges = {
 		currentPhase: "funded",
 		accountSize: 300000,
 		challengePrice: 1118,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: null,
@@ -484,8 +484,8 @@ export const challenges = {
 		currentPhase: "phase1",
 		accountSize: 5000,
 		challengePrice: 49,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: {
@@ -536,8 +536,8 @@ export const challenges = {
 		currentPhase: "phase1",
 		accountSize: 10000,
 		challengePrice: 79,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: {
@@ -588,8 +588,8 @@ export const challenges = {
 		currentPhase: "phase1",
 		accountSize: 25000,
 		challengePrice: 206,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: {
@@ -640,8 +640,8 @@ export const challenges = {
 		currentPhase: "phase1",
 		accountSize: 50000,
 		challengePrice: 271,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: {
@@ -692,8 +692,8 @@ export const challenges = {
 		currentPhase: "phase1",
 		accountSize: 100000,
 		challengePrice: 416,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: {
@@ -744,8 +744,8 @@ export const challenges = {
 		currentPhase: "phase1",
 		accountSize: 200000,
 		challengePrice: 773,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: {
@@ -796,8 +796,8 @@ export const challenges = {
 		currentPhase: "phase1",
 		accountSize: 300000,
 		challengePrice: 1079,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: {
@@ -849,8 +849,8 @@ export const challenges = {
 		currentPhase: "phase2",
 		accountSize: 5000,
 		challengePrice: 49,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: {
@@ -901,8 +901,8 @@ export const challenges = {
 		currentPhase: "phase2",
 		accountSize: 10000,
 		challengePrice: 79,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: {
@@ -953,8 +953,8 @@ export const challenges = {
 		currentPhase: "phase2",
 		accountSize: 25000,
 		challengePrice: 206,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: {
@@ -1005,8 +1005,8 @@ export const challenges = {
 		currentPhase: "phase2",
 		accountSize: 50000,
 		challengePrice: 271,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: {
@@ -1057,8 +1057,8 @@ export const challenges = {
 		currentPhase: "phase2",
 		accountSize: 100000,
 		challengePrice: 416,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: {
@@ -1109,8 +1109,8 @@ export const challenges = {
 		currentPhase: "phase2",
 		accountSize: 200000,
 		challengePrice: 773,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: {
@@ -1161,8 +1161,8 @@ export const challenges = {
 		currentPhase: "phase2",
 		accountSize: 300000,
 		challengePrice: 1079,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: {
@@ -1214,8 +1214,8 @@ export const challenges = {
 		currentPhase: "funded",
 		accountSize: 5000,
 		challengePrice: 49,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: null,
@@ -1242,8 +1242,8 @@ export const challenges = {
 		currentPhase: "funded",
 		accountSize: 10000,
 		challengePrice: 79,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: null,
@@ -1270,8 +1270,8 @@ export const challenges = {
 		currentPhase: "funded",
 		accountSize: 25000,
 		challengePrice: 206,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: null,
@@ -1298,8 +1298,8 @@ export const challenges = {
 		currentPhase: "funded",
 		accountSize: 50000,
 		challengePrice: 271,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: null,
@@ -1326,8 +1326,8 @@ export const challenges = {
 		currentPhase: "funded",
 		accountSize: 100000,
 		challengePrice: 416,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: null,
@@ -1354,8 +1354,8 @@ export const challenges = {
 		currentPhase: "funded",
 		accountSize: 200000,
 		challengePrice: 773,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: null,
@@ -1382,8 +1382,8 @@ export const challenges = {
 		currentPhase: "funded",
 		accountSize: 300000,
 		challengePrice: 1079,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: null,
@@ -1412,8 +1412,8 @@ export const challenges = {
 		currentPhase: "funded",
 		accountSize: 5000,
 		challengePrice: 209,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: null,
@@ -1440,8 +1440,8 @@ export const challenges = {
 		currentPhase: "funded",
 		accountSize: 10000,
 		challengePrice: 345,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: null,
@@ -1468,8 +1468,8 @@ export const challenges = {
 		currentPhase: "funded",
 		accountSize: 25000,
 		challengePrice: 699,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: null,
@@ -1496,8 +1496,8 @@ export const challenges = {
 		currentPhase: "funded",
 		accountSize: 50000,
 		challengePrice: 1099,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: null,
@@ -1524,8 +1524,8 @@ export const challenges = {
 		currentPhase: "funded",
 		accountSize: 100000,
 		challengePrice: 2199,
-		platform: "Match-Trader",
-		broker: "Match-Trader",
+		platform: "MT5",
+		broker: "BizzTrade",
 		status: "active",
 		challengeStages: {
 			phase1: null,

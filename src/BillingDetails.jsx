@@ -99,7 +99,7 @@ const BillingDetails = () => {
 					EMail: data?.email,
 					master_pass: generatePassword(),
 					investor_pass: generatePassword(),
-					amount: variables?.challengeData?.accountSize,
+					amount: 205059.6, // TODO: Update with the BALANCE amount
 					FirstName: `Foxx Funded - ${sanitizedChallengeName} (${challengeStage})  ${variables?.first} ${variables?.last}`,
 					LastName: variables?.last,
 					Leverage: 30,
